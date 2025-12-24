@@ -1,0 +1,84 @@
+<div class="signup-container">
+  <div class="signup-card">
+    <div class="logo-section">
+      <h1>Join as Brand</h1>
+      <p>Find creators and launch your UGC campaigns!</p>
+    </div>
+
+    <form (ngSubmit)="onSignup()" class="signup-form">
+      <div class="form-group">
+        <label>Full Name *</label>
+        <input type="text" [(ngModel)]="signupData.name" name="name" placeholder="Ahmed Ben Salem" required>
+      </div>
+
+      <div class="form-group">
+        <label>Company Name *</label>
+        <input type="text" [(ngModel)]="signupData.companyName" name="companyName" placeholder="Fashion Elite" required>
+      </div>
+
+      <div class="form-group">
+        <label>Email *</label>
+        <input type="email" [(ngModel)]="signupData.email" name="email" placeholder="ahmed@fashionelite.tn" required>
+      </div>
+
+      <div class="form-group">
+        <label>Password *</label>
+        <input type="password" [(ngModel)]="signupData.password" name="password" placeholder="••••••••" required>
+      </div>
+
+      <div class="form-group">
+        <label>Confirm Password *</label>
+        <input type="password" [(ngModel)]="signupData.confirmPassword" name="confirmPassword" placeholder="••••••••" required>
+      </div>
+
+      <div class="form-group">
+        <label>Brand Size *</label>
+        <select [(ngModel)]="signupData.brandType" name="brandType">
+          <option value="small-brand">Small Brand / Local Business</option>
+          <option value="large-brand">Large Brand / Enterprise</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Industry (Optional)</label>
+        <select [(ngModel)]="signupData.industry" name="industry">
+          <option value="">Select Industry</option>
+          <option value="fashion">Fashion & Apparel</option>
+          <option value="food">Food & Beverage</option>
+          <option value="tech">Technology</option>
+          <option value="beauty">Beauty & Cosmetics</option>
+          <option value="fitness">Fitness & Sports</option>
+          <option value="home">Home & Living</option>
+          <option value="travel">Travel & Tourism</option>
+          <option value="education">Education</option>
+          <option value="entertainment">Entertainment</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Monthly Budget (DT) (Optional)</label>
+        <select [(ngModel)]="signupData.budgetRange" name="budgetRange">
+          <option value="1000-5000">1,000 - 5,000 DT</option>
+          <option value="5000-10000">5,000 - 10,000 DT</option>
+          <option value="10000-25000">10,000 - 25,000 DT</option>
+          <option value="25000-50000">25,000 - 50,000 DT</option>
+          <option value="50000-100000">50,000 - 100,000 DT</option>
+          <option value="100000+">100,000+ DT</option>
+        </select>
+      </div>
+
+      <div *ngIf="error" class="error-message">{{ error }}</div>
+
+      <button type="submit" class="signup-btn" [disabled]="loading">
+        <span *ngIf="!loading">Create Brand Account</span>
+        <span *ngIf="loading">Creating account...</span>
+      </button>
+    </form>
+
+    <div class="signup-footer">
+      <p>Already have an account? <a routerLink="/login">Sign In</a></p>
+      <p>Are you a creator? <a routerLink="/signup/creator">Sign up as Creator</a></p>
+    </div>
+  </div>
+</div>

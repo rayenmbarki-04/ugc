@@ -1,0 +1,109 @@
+<div class="home">
+  <!-- TOP BAR -->
+  <nav class="home-nav">
+    <div class="home-logo">
+      <span class="logo-dot"></span>
+      <span>UGC Platform TN</span>
+    </div>
+    <div class="home-links">
+      <a href="#how">How it works</a>
+      <a href="#creators">Creators</a>
+      <a href="#brands">Brands</a>
+      <button class="outline-btn" (click)="navigateToLogin()">Login</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-left">
+      <p class="eyebrow">Made for Tunisian brands & creators</p>
+      <h1>Turn everyday content into real campaign results.</h1>
+      <p class="hero-text">
+        A simple space where brands post briefs, creators submit short videos, and everyone sees
+        clear performance and payments in one dashboard.
+      </p>
+      <div class="hero-actions">
+        <button class="primary-btn" (click)="navigateToCreatorSignup()">I’m a creator</button>
+        <button class="secondary-btn" (click)="navigateToBrandSignup()">I’m a brand</button>
+      </div>
+      <div class="hero-tags">
+        <span>#UGC</span><span>#TikTok</span><span>#Reels</span><span>#MadeInTN</span>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="hero-card metric">
+        <div class="metric-label">Average approval time</div>
+        <div class="metric-value">24h</div>
+        <div class="metric-sub">from upload to brand feedback</div>
+      </div>
+      <div class="hero-grid">
+        <div class="hero-card small">
+          <div class="card-title">Creators</div>
+          <div class="card-value">+1K</div>
+          <div class="card-sub">micro & nano in Tunisia</div>
+        </div>
+        <div class="hero-card small">
+          <div class="card-title">Campaigns</div>
+          <div class="card-value">65</div>
+          <div class="card-sub">briefs managed end‑to‑end</div>
+        </div>
+        <div class="hero-card small">
+          <div class="card-title">Brands</div>
+          <div class="card-value">20</div>
+          <div class="card-sub">e‑commerce, food, fashion</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how" class="how-section">
+    <h2>How it works</h2>
+    <div class="how-grid">
+      <div class="how-step">
+        <span class="step-badge">1</span>
+        <h3>Create your profile</h3>
+        <p>Sign up as a brand or creator and complete a simple profile focused on what you need, not endless forms.</p>
+      </div>
+      <div class="how-step">
+        <span class="step-badge">2</span>
+        <h3>Publish or join a brief</h3>
+        <p>Brands share short, clear briefs. Creators browse and submit content that fits their style and audience.</p>
+      </div>
+      <div class="how-step">
+        <span class="step-badge">3</span>
+        <h3>Approve, pay, repeat</h3>
+        <p>Brands approve videos in a few clicks, payments are tracked, and both sides see performance metrics.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SPLIT BAND -->
+  <section id="creators" class="dual-section">
+    <div class="dual-card">
+      <h2>For creators</h2>
+      <ul>
+        <li>Get briefs that match your style and follower size.</li>
+        <li>No agencies, no spam — just clear tasks and payouts.</li>
+        <li>Track what you earned per brand and per video.</li>
+      </ul>
+      <button class="primary-btn" (click)="navigateToCreatorSignup()">Start as creator</button>
+    </div>
+
+    <div id="brands" class="dual-card">
+      <h2>For brands</h2>
+      <ul>
+        <li>Launch UGC campaigns without hunting for creators on social media.</li>
+        <li>Review all videos in one clean interface.</li>
+        <li>Know where every dinar goes with clear campaign stats.</li>
+      </ul>
+      <button class="secondary-btn" (click)="navigateToBrandSignup()">Start as brand</button>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="home-footer">
+    <p>© 2025 UGC Platform Tunisia · Built for local brands & creators</p>
+  </footer>
+</div>
