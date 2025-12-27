@@ -1,138 +1,316 @@
-<div class="page">
-  <!-- Top bar -->
-  <header class="topbar">
-    <div class="brand">
-      <div class="brand-icon">✨</div>
-      <div class="brand-name">Creator Studio</div>
+<div class="dashboard-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+  <!-- Profile -->
+  <div class="profile-section" (click)="setActiveSection('profile')">
+    <img src="assets/profilepic.png" alt="Profile Picture" class="profile-pic">
+    <h3 class="profile-name">Ahmed Oc</h3>
+  </div>
+
+  <!-- Menu -->
+  <nav class="sidebar-menu">
+    <button [class.active]="activeSection === 'dashboard'" (click)="setActiveSection('dashboard')">
+      <i class="icon-dashboard"></i>
+      <span>Dashboard</span>
+    </button>
+    <button [class.active]="activeSection === 'notifications'" (click)="setActiveSection('notifications')">
+      <i class="icon-notifications"></i>
+      <span>Notifications</span>
+    </button>
+    <button [class.active]="activeSection === 'formation'" (click)="setActiveSection('formation')">
+      <i class="icon-formation"></i>
+      <span>Formation Flash</span>
+    </button>
+    <button [class.active]="activeSection === 'campaigns'" (click)="setActiveSection('campaigns')">
+      <i class="icon-campaigns"></i>
+      <span>Campaigns</span>
+    </button>
+    <button [class.active]="activeSection === 'badges'" (click)="setActiveSection('badges')">
+      <i class="icon-badges"></i>
+      <span>Badges & Points</span>
+    </button>
+    <button [class.active]="activeSection === 'cashout'" (click)="setActiveSection('cashout')">
+      <i class="icon-cashout"></i>
+      <span>Cashout</span>
+    </button>
+  </nav>
+  <!-- Sidebar Footer -->
+<div class="sidebar-footer">
+  <img src="assets/logo.png" alt="Logo" class="footer-logo">
+  <span class="footer-name">Contonsi</span>
+</div>
+
+
+</aside>
+
+
+  <!-- Center Content -->
+  <main class="content-area">
+    <!-- Profile -->
+   <section *ngIf="activeSection === 'profile'">
+  <!-- Profile Overview -->
+  <div class="profile-overview">
+    <img src="assets/profilepic.png" alt="Profile Picture" class="profile-pic-large">
+    <h2>Ahmed Oc</h2>
+    <div class="linked-accounts">
+      <p>Instagram: @ahmed</p>
+      <p>TikTok: @ahmedt</p>
+      <p>Followers: 12,000</p>
     </div>
+    <button class="btn" (click)="openPersonalization()">Personalize Info</button>
+  </div>
 
-    <div class="user">
-      <div class="user-avatar">👩</div>
-      <div class="user-text">
-        <div class="user-name">Amira Saïdi</div>
-        <div class="user-sub">5200 followers</div>
+  <!-- Notifications Settings -->
+  <div class="profile-section-card">
+    <h3>Notifications</h3>
+    <label><input type="checkbox" [(ngModel)]="notifCampaignLaunch"> Campaign launched</label>
+    <label><input type="checkbox" [(ngModel)]="notifDeadline"> Campaign deadline</label>
+    <label><input type="checkbox" [(ngModel)]="notifCampaignClose"> Campaign closed</label>
+    <label><input type="checkbox" [(ngModel)]="notifPassword"> Password change reminders</label>
+  </div>
+
+  <!-- Help -->
+  <div class="profile-section-card">
+    <h3>Help</h3>
+    <button class="btn" (click)="openHelp()">Open Help</button>
+  </div>
+
+  <!-- Logout -->
+  <div class="profile-section-card">
+    <button class="btn logout-btn">Logout</button>
+  </div>
+</section>
+
+<!-- Personalization Popup -->
+<div class="popup" *ngIf="showPersonalization">
+  <form (ngSubmit)="savePersonalization()">
+    <h3>Personalization</h3>
+    <label>Age / Localisation: <input type="text" [(ngModel)]="user.ageLocation" name="ageLocation"></label>
+    <label>Centres d’intérêt: <input type="text" [(ngModel)]="user.interests" name="interests"></label>
+    <label>Platforms used: <input type="text" [(ngModel)]="user.platforms" name="platforms"></label>
+    <label>Average daily usage: <input type="text" [(ngModel)]="user.dailyTime" name="dailyTime"></label>
+    <label>Preferred content type: <input type="text" [(ngModel)]="user.contentType" name="contentType"></label>
+    <div class="popup-actions">
+      <button type="submit" class="btn">Save</button>
+      <button type="button" class="btn" (click)="closePersonalization()">Cancel</button>
+    </div>
+  </form>
+</div>
+
+<!-- Help Popup -->
+<div class="popup" *ngIf="showHelp">
+  <h3>Help</h3>
+  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+  <button class="btn" (click)="closeHelp()">Close</button>
+</div>
+
+<!-- Dashboard -->
+    <section *ngIf="activeSection === 'dashboard'">
+  <h2>Dashboard</h2>
+
+  <!-- Quick Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">Followers: {{ stats.followers }}</div>
+    <div class="stat-card">Engagement: {{ stats.engagement }}%</div>
+    <div class="stat-card">Shares: {{ stats.shares }}</div>
+    <div class="stat-card">Comments: {{ stats.comments }}</div>
+  </div>
+
+  <!-- Charts -->
+ <div class="charts-grid">
+  <div class="chart-card" *ngIf="isBrowser">
+    <h3>Followers Over Time</h3>
+    <canvas baseChart 
+            [data]="followersData" 
+            [options]="followersOptions" 
+            chartType="line">
+    </canvas>
+  </div>
+
+  <div class="chart-card" *ngIf="isBrowser">
+    <h3>Engagement Distribution</h3>
+    <canvas baseChart 
+            [data]="engagementData" 
+            [options]="engagementOptions" 
+            chartType="doughnut">
+    </canvas>
+  </div>
+
+  <div class="chart-card" *ngIf="isBrowser">
+    <h3>Campaign Status</h3>
+    <canvas baseChart 
+            [data]="campaignsData" 
+            [options]="campaignsOptions" 
+            chartType="bar">
+    </canvas>
+  </div>
+
+  <div class="chart-card" *ngIf="isBrowser">
+    <h3>Content Preference</h3>
+    <canvas baseChart 
+            [data]="contentData" 
+            [options]="contentOptions" 
+            chartType="radar">
+    </canvas>
+  </div>
+</div>
+
+</section>
+
+   <!-- Notifications -->
+<section *ngIf="activeSection === 'notifications'">
+  <h2>Notifications</h2>
+  <ul class="notifications-list">
+    <li *ngFor="let note of notifications" class="notification-card">
+      <i class="fa fa-bell"></i> <!-- optional bell icon -->
+      <div class="notification-content">
+        <p>{{ note.message }}</p>
+        <span class="timestamp">{{ note.time | date:'short' }}</span>
+      </div>
+    </li>
+  </ul>
+</section>
+
+
+   <!-- Formation Flash -->
+<section *ngIf="activeSection === 'formation'">
+  <h2>Formation Flash</h2>
+  <div class="flash-card" *ngFor="let note of dailyNotesArray">
+    <i class="fa fa-lightbulb"></i>
+    <div class="flash-content">
+      <p>{{ note.dailyNote }}</p>
+      <span class="flash-date">{{ note.noteDate | date:'fullDate' }}</span>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- Campaigns -->
+<section *ngIf="activeSection === 'campaigns'" class="campaigns-section">
+  <div class="campaigns-header">
+    <h2>Available Campaigns</h2>
+    <p class="campaigns-description">
+      Choose the best suitable campaign. Remember to give your best quality, as every content will be moderated. 
+      Unprofessional tries may lead to bans!
+    </p>
+  </div>
+
+  <div class="campaigns-grid">
+    <div class="campaign-card" *ngFor="let campaign of campaigns" (click)="openCampaignPopup(campaign)">
+      <img [src]="campaign.image" alt="{{ campaign.name }}" class="campaign-image" />
+      <div class="campaign-info">
+        <h3>{{ campaign.name }}</h3>
+        <p><strong>Brand:</strong> {{ campaign.brand }}</p>
+        <p><strong>Start:</strong> {{ campaign.start_date | date }}</p>
+        <p><strong>Deadline:</strong> {{ campaign.deadline | date }}</p>
+        <p><strong>Price:</strong> {{ campaign.price | currency }}</p>
+        <p class="campaign-desc">{{ campaign.short_description }}</p>
       </div>
     </div>
+  </div>
 
-    <div class="top-actions">
-      <button class="icon-btn" type="button" aria-label="Notifications">
-        🔔
-        <span class="badge">3</span>
-      </button>
-
-      <div class="pill">
-        <span class="coin">⭐</span>
-        <span class="pill-text">4.8</span>
+  <!-- Campaign Popup -->
+  <div class="campaign-popup" *ngIf="selectedCampaign">
+    <div class="popup-content">
+      <button class="close-btn" (click)="closeCampaignPopup()">X</button>
+      <h3>{{ selectedCampaign.name }}</h3>
+      <p><strong>Brand:</strong> {{ selectedCampaign.brand }}</p>
+      <p><strong>Product:</strong> {{ selectedCampaign.product }}</p>
+      <p><strong>Start:</strong> {{ selectedCampaign.start_date | date }}</p>
+      <p><strong>Deadline:</strong> {{ selectedCampaign.deadline | date }}</p>
+      <p><strong>Price:</strong> {{ selectedCampaign.price | currency }}</p>
+      <p>{{ selectedCampaign.full_description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...' }}</p>
+      
+      <!-- Upload Section -->
+      <div class="upload-section">
+        <label for="fileUpload">Upload your content:</label>
+        <input type="file" id="fileUpload" />
       </div>
 
-      <div class="pill">
-        <span class="coin">🪙</span>
-        <span class="pill-text">1250 DT</span>
+      <!-- Reserve Spot -->
+      <button class="reserve-btn">Reserve Your Spot</button>
+    </div>
+  </div>
+</section>
+
+
+   <section *ngIf="activeSection === 'badges'">
+  <h2>Badges & Points</h2>
+
+  <!-- Badge cards -->
+  <div class="badge-cards">
+    <div *ngFor="let badge of badgesList" 
+         class="badge-card" 
+         [ngClass]="{'unlocked': userPoints >= badge.pointsRequired}">
+<div class="badge-icon">
+  <img [src]="badge.icon" alt="{{ badge.name }}" />
+</div>
+      <div class="badge-info">
+        <h3>{{ badge.name }}</h3>
+        <p>Niveau: {{ badge.level }}</p>
+        <p>Points requis: {{ badge.pointsRequired }}</p>
+      </div>
+      <div class="progress-bar">
+        <div class="progress" [style.width.%]="userPoints >= badge.pointsRequired ? 100 : (userPoints / badge.pointsRequired) * 100"></div>
       </div>
     </div>
-  </header>
+  </div>
 
-  <main class="container">
-    <h1 class="page-title">Your Performance</h1>
+  <!-- Next badge info -->
+  <div class="next-badge" *ngIf="nextBadge">
+    <h3>Prochain badge: {{ nextBadge.name }} ({{ nextBadge.level }})</h3>
+    <p>Points restants pour le débloquer : {{ pointsToNextBadge }}</p>
+    <div class="progress-bar">
+      <div class="progress" [style.width.%]="(userPoints / nextBadge.pointsRequired) * 100"></div>
+    </div>
+  </div>
 
-    <!-- Stats row 1 -->
-    <section class="stats">
-      <article class="stat-card">
-        <div class="stat-icon">📈</div>
-        <div>
-          <div class="stat-label">AVG ENGAGEMENT</div>
-          <div class="stat-value">8.2%</div>
-        </div>
-      </article>
+  <!-- Milestones / Actions -->
+  <div class="actions-list">
+    <h3>Actions et points</h3>
+    <ul>
+      <li *ngFor="let action of userActions">
+        {{ action.action }} : +{{ action.points }} pts
+      </li>
+    </ul>
+  </div>
 
-      <article class="stat-card">
-        <div class="stat-icon">⭐</div>
-        <div>
-          <div class="stat-label">VIDEO QUALITY</div>
-          <div class="stat-value">4.8/5</div>
-        </div>
-      </article>
+  <p>Total points : {{ userPoints }}</p>
+</section>
 
-      <article class="stat-card">
-        <div class="stat-icon">🎯</div>
-        <div>
-          <div class="stat-label">BRAND FIT</div>
-          <div class="stat-value">Excellent</div>
-        </div>
-      </article>
-    </section>
 
-    <!-- Stats row 2 -->
-    <section class="stats">
-      <article class="stat-card">
-        <div class="stat-icon">🎬</div>
-        <div>
-          <div class="stat-label">VIDEOS SUBMITTED</div>
-          <div class="stat-value">18</div>
-        </div>
-      </article>
+   <!-- Cashout -->
+<section *ngIf="activeSection === 'cashout'" class="cashout-section">
+  <h2>Cashout</h2>
 
-      <article class="stat-card">
-        <div class="stat-icon">✅</div>
-        <div>
-          <div class="stat-label">APPROVED</div>
-          <div class="stat-value">16</div>
-        </div>
-      </article>
+  <!-- Description -->
+  <p class="cashout-description">
+    Here you can see your current balance and your earned points. 
+    Redeem your points or transfer your balance directly to your bank account.
+  </p>
 
-      <article class="stat-card">
-        <div class="stat-icon">💵</div>
-        <div>
-          <div class="stat-label">TOTAL EARNED</div>
-          <div class="stat-value">2840 DT</div>
-        </div>
-      </article>
-    </section>
+  <!-- Balance Card -->
+ 
 
-    <!-- Tabs + content -->
-    <section class="panel">
-      <div class="tabs">
-        <button class="tab active" type="button">🎯 Available Campaigns</button>
-        <button class="tab" type="button">🎥 My Videos</button>
-        <button class="tab" type="button">🏅 Badges & Achievements</button>
-        <button class="tab" type="button">📊 Analytics</button>
+  <!-- Points Card -->
+  <div class="cashout-card">
+    <div class="cashout-info">
+      <img src="assets/points.png" alt="Points Icon" class="cashout-icon">
+      <div>
+        <span class="cashout-label">Your Balance</span>
+        <span class="cashout-value">{{ points }} pts</span>
       </div>
+    </div>
+    <button class="btn redeem-btn">Transfer Points</button>
+  </div>
 
-      <div class="tab-body">
-        <h2 class="big-title">Perfect Campaigns for You</h2>
+  <!-- Info/Tip Section -->
+  <div class="cashout-tip">
+    <img src="assets/info.png" alt="Info Icon" class="tip-icon">
+    <p>Remember: Cashout is instant! Make sure your bank account info is up to date to avoid delays.</p>
+  </div>
+</section>
 
-        <div class="grid">
-          <article class="card">
-            <div class="card-top">
-              <div class="tag tag-hot">HOT</div>
-            </div>
-            <h4 class="card-title">Tutto Sport Campaign</h4>
-            <div class="card-sub">Tutto Sport</div>
-            <p class="card-desc">Showcase the latest sports gear in a short, dynamic video.</p>
-            <button class="btn">View details</button>
-          </article>
-
-          <article class="card">
-            <div class="card-top">
-              <div class="tag tag-trend">TRENDING</div>
-            </div>
-            <h4 class="card-title">Vendi.tn Launch</h4>
-            <div class="card-sub">Vendi.tn</div>
-            <p class="card-desc">Be part of the e-commerce revolution with authentic UGC content.</p>
-            <button class="btn">View details</button>
-          </article>
-
-          <article class="card">
-            <div class="card-top">
-              <div class="tag tag-active">ACTIVE</div>
-            </div>
-            <h4 class="card-title">Fashion Collaboration</h4>
-            <div class="card-sub">LaMode.tn</div>
-            <p class="card-desc">Create trendy fashion content featuring the latest collection.</p>
-            <button class="btn">View details</button>
-          </article>
-        </div>
-      </div>
-    </section>
   </main>
 </div>
