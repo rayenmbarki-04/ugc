@@ -1,97 +1,356 @@
-<div class="dash-page">
-  <!-- Top bar -->
-  <header class="dash-top">
-    <div>
-      <h1 class="dash-title">Enterprise Dashboard</h1>
-      <p class="dash-sub">
-        Fashion Global Inc
-        <span class="dash-pill">Enterprise</span>
-        <span class="dash-pill money">💰 75 000 / 150 000 DT budget</span>
-      </p>
+<div class="dashboard-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <!-- Profile / Company Info -->
+    <div class="profile-section" (click)="setActiveSection('profile')">
+      <img src="assets/logomarque.png" alt="Company Logo" class="profile-pic">
+      <h3 class="profile-name">{{ currentBrand?.brand_name || 'Brand' }}
+</h3>
     </div>
 
-    <div class="enterprise-search">
-      <input
-        class="enterprise-search-input"
-        type="text"
-        placeholder="Search campaigns..."
-      />
+    <!-- Menu -->
+    <nav class="sidebar-menu">
+      <button [class.active]="activeSection === 'dashboard'" (click)="setActiveSection('dashboard')">
+        <i class="icon-dashboard"></i>
+        <span>Dashboard</span>
+      </button>
+      <button [class.active]="activeSection === 'notifications'" (click)="setActiveSection('notifications')">
+        <i class="icon-notifications"></i>
+        <span>Notifications</span>
+      </button>
+      <button [class.active]="activeSection === 'campaigns'" (click)="setActiveSection('campaigns')">
+        <i class="icon-campaigns"></i>
+        <span>Campaigns</span>
+      </button>
+      <button [class.active]="activeSection === 'badges'" (click)="setActiveSection('badges')">
+        <i class="icon-badges"></i>
+        <span>Badges & Reliability</span>
+      </button>
+      <button [class.active]="activeSection === 'settings'" (click)="setActiveSection('settings')">
+        <i class="icon-settings"></i>
+        <span>Settings</span>
+      </button>
+    </nav>
+
+    <!-- Sidebar Footer -->
+    <div class="sidebar-footer">
+      <img src="assets/logo.png" alt="Logo" class="footer-logo">
+      <span class="footer-name">Contonsi</span>
     </div>
-  </header>
+  </aside>
 
-  <!-- Stats row -->
-  <section class="dash-row dash-row--stats">
-    <article class="dash-card dash-card--stat">
-      <p class="stat-label">Approval rate</p>
-      <p class="stat-value">24%</p>
-    </article>
+  <!-- Main Content -->
+  <main class="content-area">
 
-    <article class="dash-card dash-card--stat">
-      <p class="stat-label">Social reach</p>
-      <p class="stat-value">2.5M</p>
-    </article>
+    <!-- Profile / Company Info -->
+    <section *ngIf="activeSection === 'profile'">
+      <div class="profile-overview">
+        <img src="assets/logomarque.png" alt="Company Logo" class="profile-pic-large">
+        <h2>Maxchips</h2>
+        <p>Location: <span>{{ company.location }}</span></p>
+        <p>Email: <span>{{ company.email }}</span></p>
+        <p>Social: <span>{{ company.social }}</span></p>
+        <button class="btn" (click)="openPersonalization()">Edit Info</button>
+      </div>
+    </section>
 
-    <article class="dash-card dash-card--stat">
-      <p class="stat-label">Avg engagement</p>
-      <p class="stat-value">3.2%</p>
-    </article>
-  </section>
+    <!-- Notifications -->
+    <section *ngIf="activeSection === 'notifications'">
+      <h2>Notifications</h2>
+      <ul class="notifications-list">
+        <li *ngFor="let note of notifications" class="notification-card">
+          <i class="fa fa-bell"></i>
+          <div class="notification-content">
+            <p>{{ note.message }}</p>
+            <span class="timestamp">{{ note.time | date:'short' }}</span>
+          </div>
+        </li>
+      </ul>
+    </section>
 
-  <!-- Overview + quick actions & campaigns -->
-  <section class="dash-row">
-    <!-- LEFT COLUMN -->
-    <div class="dash-col">
-      <!-- Overview -->
-      <header class="dash-section-header">
-        <h2 class="dash-section-title">Dashboard Overview</h2>
-      </header>
+    <!-- Dashboard -->
+    <section *ngIf="activeSection === 'dashboard'">
+      <h2>Dashboard</h2>
+      <div class="stats-grid">
+        <div class="stat-card">Total Campaigns: {{ stats.totalCampaigns }}</div>
+        <div class="stat-card">Active Campaigns: {{ stats.active }}</div>
+        <div class="stat-card">Completed Campaigns: {{ stats.completed }}</div>
+        <div class="stat-card">Average Feedback: {{ stats.avgFeedback }}%</div>
+      </div>
 
-      <article class="dash-card perf-card">
-        <p class="perf-label">Active campaigns</p>
-        <p class="perf-main">8 campaigns · 4 markets</p>
-        <p class="perf-sub">Best performing: Spring Collection 2025</p>
-      </article>
+     <!-- Charts -->
+<div class="charts-grid">
+  <div class="chart-card" *ngIf="isBrowser">
+    <h3>Submissions Over Time</h3>
+    <canvas *ngIf="isBrowser" baseChart [data]="submissionsData" [options]="submissionsOptions" chartType="line"></canvas>
+  </div>
 
-      <!-- Quick actions -->
-      <header class="dash-section-header" style="margin-top: 18px;">
-        <h2 class="dash-section-title">Quick Actions</h2>
-      </header>
+  <div class="chart-card" *ngIf="isBrowser">
+    <h3>Campaign Performance</h3>
+    <canvas *ngIf="isBrowser" baseChart [data]="campaignsData" [options]="campaignsOptions" chartType="bar"></canvas>
+  </div>
 
-      <article class="dash-card quick-actions">
-        <button class="btn btn-small btn-primary">+ New Campaign</button>
-        <button class="btn btn-small btn-outline">Find Creators</button>
-        <button class="btn btn-small btn-outline">View Reports</button>
-        <button class="btn btn-small btn-outline">Manage Payments</button>
-        <button class="btn btn-small btn-outline">Settings</button>
-      </article>
-    </div>
+  <div class="chart-card" *ngIf="isBrowser">
+    <h3>Average Feedback Score</h3>
+    <canvas *ngIf="isBrowser" baseChart [data]="feedbackData" [options]="feedbackOptions" chartType="doughnut"></canvas>
+  </div>
+</div>
 
-    <!-- RIGHT COLUMN -->
-    <div class="dash-col">
-      <header class="dash-section-header">
-        <h2 class="dash-section-title">Campaign Management</h2>
-        <button class="btn btn-primary btn-small">+ Create New Campaign</button>
-      </header>
+    </section>
 
-      <article class="dash-card campaign">
-        <div class="campaign-header">
-          <span class="badge badge--active">Active</span>
-          <button class="btn btn-small btn-outline">View</button>
+    <!-- Campaigns Management -->
+    <section *ngIf="activeSection === 'campaigns'" class="campaigns-section">
+  <div class="campaigns-header">
+  <h2>Campaigns</h2>
+  <button class="btn create-btn" (click)="showCreatePopup = true">Create New Campaign</button>
+
+  <!-- Create Campaign Modal -->
+  <div class="modal-backdrop" *ngIf="showCreatePopup">
+    <div class="modal">
+
+      <div class="modal-header">
+        <h3>Create New Campaign</h3>
+        <button class="close-btn" (click)="showCreatePopup = false">×</button>
+      </div>
+
+      <form #formRef="ngForm" (ngSubmit)="createCampaign()" novalidate>
+        <div class="modal-body">
+          <!-- Basic Info -->
+          <h4>Basic Information</h4>
+          <label>Campaign Name</label>
+          <input type="text" [(ngModel)]="Form.name" name="name" required />
+
+          <label>Brand</label>
+          <input type="text" [(ngModel)]="Form.brand" name="brand" required />
+
+          <label>Budget</label>
+          <input type="number" [(ngModel)]="Form.budget" name="budget" required />
+
+          <label>Image URL</label>
+          <input type="text" [(ngModel)]="Form.image" name="image" required />
+
+          <label>Start Date</label>
+          <input type="date" [(ngModel)]="Form.start_date" name="start_date" required />
+
+          <label>End Date</label>
+          <input type="date" [(ngModel)]="Form.end_date" name="end_date" required />
+
+          <!-- Brand Info -->
+          <h4>Brand Information</h4>
+          <label>Description</label>
+          <textarea [(ngModel)]="Form.description" name="description" required></textarea>
+
+          <label>Brand Qualities (comma separated)</label>
+          <input type="text" [(ngModel)]="Form.qualities" name="qualities" required />
+
+          <!-- Campaign Details -->
+          <h4>Campaign Details</h4>
+          <label>Objective</label>
+          <input type="text" [(ngModel)]="Form.objective" name="objective" required />
+
+          <label>Content Type</label>
+          <input type="text" [(ngModel)]="Form.content_type" name="content_type" required />
+
+          <label>Platforms (comma separated)</label>
+          <input type="text" [(ngModel)]="Form.platforms" name="platforms" required />
+
+          <label>Hashtags</label>
+          <input type="text" [(ngModel)]="Form.hashtag" name="hashtag" required />
+
+          <label>Product Name</label>
+          <input type="text" [(ngModel)]="Form.product_name" name="product_name" required />
+
+          <label>Product Description</label>
+          <textarea [(ngModel)]="Form.product_description" name="product_description" required></textarea>
+
+          <label>Number of Creators</label>
+          <input type="number" [(ngModel)]="Form.number_of_creators" name="number_of_creators" required />
+
+          <label>Creator Type</label>
+          <select [(ngModel)]="Form.creator_type" name="creator_type" required>
+            <option value="">Select type</option>
+            <option value="micro-influencer">Micro Influencer</option>
+            <option value="macro-influencer">Macro Influencer</option>
+          </select>
+
+          <label>Your Mission</label>
+          <textarea [(ngModel)]="Form.your_mission" name="your_mission" required></textarea>
+
+          <label>What To Do (one per line)</label>
+          <textarea [(ngModel)]="Form.what_to_do" name="what_to_do" required></textarea>
+
+          <label>What Not To Do (one per line)</label>
+          <textarea [(ngModel)]="Form.what_not_to_do" name="what_not_to_do" required></textarea>
         </div>
-        <h3 class="campaign-title">Spring Collection 2025</h3>
-        <p class="campaign-brand">Budget 25 000 / 50 000 DT</p>
-        <p class="campaign-meta">Reach 850K · Engagement 11.2%</p>
-      </article>
 
-      <article class="dash-card campaign">
-        <div class="campaign-header">
-          <span class="badge badge--trend">Scaling</span>
-          <button class="btn btn-small btn-outline">View</button>
+        <div class="modal-footer">
+          <button class="btn secondary" type="button" (click)="showCreatePopup = false">Cancel</button>
+          <button type="submit" class="btn primary" [disabled]="!formRef.form.valid">Create Campaign</button>
         </div>
-        <h3 class="campaign-title">Summer Drop Influencer Push</h3>
-        <p class="campaign-brand">Budget 18 000 DT</p>
-        <p class="campaign-meta">Running on TikTok · Instagram</p>
-      </article>
+      </form>
     </div>
-  </section>
+  </div>
+</div>
+
+
+  <!-- Ongoing campaigns -->
+  <div class="campaigns-subsection">
+    <h3>Ongoing Campaigns</h3>
+    <div class="campaigns-grid">
+      <div class="campaign-card" *ngFor="let campaign of campaigns | filterStatus:'ongoing'" (click)="openCampaignDetails(campaign)">
+        <div class="campaign-info">
+          <h3>{{ campaign.name }}</h3>
+          <p><strong>Start:</strong> {{ campaign.start_date | date }}</p>
+          <p><strong>Deadline:</strong> {{ campaign.end_date | date }}</p>
+          <p><strong>Budget:</strong> {{ campaign.budget | currency }}</p>
+          <p>{{ campaign.description }}</p>
+        </div>
+        <button class="btn" (click)="openCampaignDetails(campaign)">View Submissions</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Past/Closed campaigns -->
+  <div class="campaigns-subsection">
+    <h3>Past Campaigns</h3>
+    <div class="campaigns-grid">
+      <div class="campaign-card" *ngFor="let campaign of campaigns | filterStatus:'closed'" (click)="openCampaignDetails(campaign)">
+        <div class="campaign-info">
+          <h3>{{ campaign.name }}</h3>
+          <p><strong>Start:</strong> {{ campaign.start_date | date }}</p>
+          <p><strong>Deadline:</strong> {{ campaign.deadline | date }}</p>
+          <p><strong>Budget:</strong> {{ campaign.budget | currency }}</p>
+          <p>{{ campaign.description }}</p>
+        </div>
+        <button class="btn" (click)="openCampaignDetails(campaign)">View Submissions</button>
+      </div>
+    </div>
+  </div>
+
+ <div class="campaign-popup" *ngIf="selectedCampaign">
+  <div class="popup-content">
+    <button class="close-btn" (click)="closeCampaignPopup()">✖</button>
+
+    <img *ngIf="selectedCampaign.image" [src]="selectedCampaign.image" alt="{{ selectedCampaign.name }}" class="campaign-image-popup" />
+
+    <h3>{{ selectedCampaign.name }}</h3>
+    <p><strong>Budget:</strong> {{ selectedCampaign.budget | currency }}</p>
+    <p><strong>Publication:</strong> {{ selectedCampaign.publication_date | date }}</p>
+    <p><strong>Deadline:</strong> {{ selectedCampaign.end_date | date }}</p>
+<p>
+  <strong>Spots Remaining:</strong> 
+  {{ selectedCampaign.campaign_details.spots_remaining }} / {{ selectedCampaign.campaign_details.number_of_creators }}
+</p>
+    <h4>Brand Info</h4>
+    <p>{{ selectedCampaign.brand_info.description }}</p>
+    <ul>
+      <li *ngFor="let q of selectedCampaign.brand_info.qualities">{{ q }}</li>
+    </ul>
+
+    <h4>Campaign Details</h4>
+    <p><strong>Objective:</strong> {{ selectedCampaign.campaign_details.objective }}</p>
+    <p><strong>Content Type:</strong> {{ selectedCampaign.campaign_details.content_type }}</p>
+    <p><strong>Platforms:</strong> {{ selectedCampaign.campaign_details.platforms.join(', ') }}</p>
+    <p><strong>Hashtag:</strong> {{ selectedCampaign.campaign_details.hashtag }}</p>
+
+    <h5>Product</h5>
+    <p>{{ selectedCampaign.campaign_details.product.name }} - {{ selectedCampaign.campaign_details.product.description }}</p>
+
+    <h5>Mission</h5>
+    <p>{{ selectedCampaign.campaign_details.your_mission }}</p>
+
+    <h5>Do's</h5>
+    <ul>
+      <li *ngFor="let task of selectedCampaign.campaign_details.what_to_do">{{ task }}</li>
+    </ul>
+
+    <h5>Don'ts</h5>
+    <ul>
+      <li *ngFor="let task of selectedCampaign.campaign_details.what_not_to_do">{{ task }}</li>
+    </ul>
+
+    <!-- Tabs -->
+    <div class="submission-tabs">
+      <button (click)="activeTab='pending'" [class.active]="activeTab==='pending'">Pending</button>
+      <button (click)="activeTab='approved'" [class.active]="activeTab==='approved'">Approved</button>
+      <button (click)="activeTab='declined'" [class.active]="activeTab==='declined'">Declined</button>
+    </div>
+
+    <!-- Submissions -->
+     <div *ngIf="(selectedCampaign.submissions | filterByStatus:activeTab).length === 0">
+  <p *ngIf="activeTab === 'pending'">No new submissions.</p>
+  <p *ngIf="activeTab === 'approved'">No approved submissions yet.</p>
+  <p *ngIf="activeTab === 'declined'">No declined submissions yet.</p>
+</div>
+    <div *ngFor="let submission of selectedCampaign.submissions | filterByStatus:activeTab" class="submission-card">
+
+  <!-- Video -->
+  <video [src]="submission.videoUrl" controls></video>
+
+  <!-- Info + Feedback -->
+  <div class="submission-info">
+    <div class="user-info">
+      <p><strong>{{ submission.user.name }}</strong></p>
+      <p>Instagram: {{ submission.user.insta }} ({{ submission.user.instaFollowers }} followers)</p>
+      <p>TikTok: {{ submission.user.tiktok }} ({{ submission.user.tiktokFollowers }} followers)</p>
+    </div>
+
+    <!-- Feedback section -->
+    <div class="feedback-section">
+      <button class="btn feedback-toggle"  *ngIf="submission.status === 'pending'" (click)="submission.showFeedback = !submission.showFeedback">
+        Give Feedback
+      </button>
+
+      <div *ngIf="submission.showFeedback && submission.status === 'pending'" class="feedback-area">
+  <textarea 
+    [(ngModel)]="submission.feedback"
+    placeholder="Remember: every feedback you give should be constructive, critical, and clear. No nonsense or bad words. Every valid feedback will reward you with points."
+  ></textarea>
+
+  <div class="feedback-actions">
+    <button class="btn approve-btn"  (click)="approveSubmission(submission, selectedCampaign.id)">Approve</button>
+    <button class="btn decline-btn" (click)="declineSubmission(submission, selectedCampaign.id)">Decline</button>
+  </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+  </div>
+</div>
+
+    </section>
+
+    <!-- Badges & Reliability -->
+    <section *ngIf="activeSection === 'badges'">
+      <h2>Badges & Reliability</h2>
+      <div class="badge-cards">
+        <div *ngFor="let badge of badgesList" class="badge-card"
+             [ngClass]="{'unlocked': reliabilityPoints >= badge.pointsRequired}">
+          <div class="badge-icon">
+            <img [src]="badge.icon" alt="{{ badge.name }}" />
+          </div>
+          <div class="badge-info">
+            <h3>{{ badge.name }}</h3>
+            <p>Level: {{ badge.level }}</p>
+            <p>Points required: {{ badge.pointsRequired }}</p>
+          </div>
+          <div class="progress-bar">
+            <div class="progress" [style.width.%]="reliabilityPoints >= badge.pointsRequired ? 100 : (reliabilityPoints / badge.pointsRequired) * 100"></div>
+          </div>
+        </div>
+      </div>
+      <p>Total Reliability Points: {{ reliabilityPoints }}</p>
+    </section>
+
+    <!-- Settings -->
+    <section *ngIf="activeSection === 'settings'">
+      <h2>Settings</h2>
+      <p>Manage your account, change password, update company info, etc.</p>
+      <button class="btn" (click)="openSettings()">Open Settings</button>
+    </section>
+
+  </main>
 </div>

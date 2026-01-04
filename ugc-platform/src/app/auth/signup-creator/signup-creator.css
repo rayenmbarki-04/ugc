@@ -1,151 +1,162 @@
+/* --- SIGNUP PAGE GLOBAL --- */
 .signup-container {
   min-height: 100vh;
-  background: radial-gradient(circle at top, #1d4ed8 0%, #020617 55%, #000 100%);
   display: flex;
-  align-items: center;
   justify-content: center;
-  padding: 40px 20px;
+  align-items: center;
+  background: #fff0de;
   font-family: 'Segoe UI', Arial, sans-serif;
+  color: #244272;
+  padding: 20px;
 }
 
 .signup-card {
-  background: rgba(15, 23, 42, 0.95);
-  backdrop-filter: blur(20px);
+  background: #fff;
   border-radius: 20px;
-  padding: 40px;
+  padding: 40px 32px;
+  max-width: 600px;
   width: 100%;
-  max-width: 500px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(37, 99, 235, 0.3);
+  box-shadow: 0 12px 30px rgba(36,66,114,0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.logo-section {
-  text-align: center;
-  margin-bottom: 30px;
+.signup-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 35px rgba(36,66,114,0.4);
 }
 
-.logo-section h1 {
-  background: linear-gradient(135deg, #38bdf8, #2563eb);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-size: 2.2rem;
+.signup-card h1, .signup-card h2 {
+  color: #244272;
   font-weight: 800;
-  margin: 0 0 8px 0;
+  margin-bottom: 24px;
 }
 
-.logo-section p {
-  color: #94a3b8;
-  margin: 0;
-  font-size: 15px;
+.signup-card h2 {
+  font-size: 20px;
 }
 
-.signup-form {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
+/* --- FORM GROUP --- */
 .form-group {
   display: flex;
   flex-direction: column;
+  margin-bottom: 18px;
 }
 
 .form-group label {
   font-weight: 600;
-  color: #e5e7eb;
   margin-bottom: 6px;
-  font-size: 14px;
+  color: #244272;
 }
 
 .form-group input,
-.form-group select {
-  padding: 12px 16px;
-  border: 2px solid rgba(148, 163, 184, 0.3);
-  border-radius: 10px;
+.form-group select,
+.form-group textarea {
+  padding: 10px 14px;
+  border: 1px solid #6e96ca;
+  border-radius: 12px;
   font-size: 15px;
-  transition: all 0.2s;
-  background: rgba(15, 23, 42, 0.8);
-  color: #e5e7eb;
-  font-family: 'Segoe UI', Arial, sans-serif;
-}
-
-.form-group input::placeholder {
-  color: #64748b;
-}
-
-.form-group select {
-  cursor: pointer;
+  outline: none;
+  transition: border 0.3s, box-shadow 0.3s;
 }
 
 .form-group input:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-  background: rgba(15, 23, 42, 0.95);
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #244272;
+  box-shadow: 0 0 8px rgba(36,66,114,0.3);
 }
 
-.error-message {
-  color: #f87171;
-  background: rgba(248, 113, 113, 0.1);
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 14px;
-  border-left: 4px solid #ef4444;
+textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+/* --- MULTI-SELECT TAG STYLE (FULL BUTTON) --- */
+.multi-select {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.signup-btn {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  color: white;
-  border: none;
-  padding: 14px;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 700;
+.multi-select label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center; /* center the text */
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #6e96ca;        /* default blue */
+  color: #fff0de;
+  font-size: 13px;
   cursor: pointer;
-  transition: all 0.3s;
-  margin-top: 8px;
+  transition: transform 0.2s, background 0.3s, color 0.3s;
+  user-select: none;
 }
 
-.signup-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+/* hide actual checkbox */
+.multi-select input[type="checkbox"] {
+  display: none;
 }
 
-.signup-btn:disabled {
+/* checked state: entire label changes */
+.multi-select input[type="checkbox"]:checked + span {
+  background: #fed0b8;       /* light beige */
+  color: #244272;            /* text color */
+  transform: scale(1.1);
+}
+
+/* hover effect: slightly lift the tag */
+.multi-select label:hover span {
+  transform: scale(1.05);
+}
+  
+/* --- CHECKBOX & RADIO --- */
+.form-group div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+input[type="checkbox"] {
+  accent-color: #244272;
+}
+
+/* --- BUTTONS --- */
+button {
+  background: linear-gradient(135deg, #244272, #6e96ca);
+  color: #fff0de;
+  font-weight: 600;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 26px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+button:hover:not([disabled]) {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(36,66,114,0.5);
+}
+
+button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-.signup-footer {
-  text-align: center;
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(148, 163, 184, 0.2);
-}
-
-.signup-footer p {
-  color: #94a3b8;
+/* --- ERROR MESSAGE --- */
+.error-message {
+  color: #d46957;
   font-size: 14px;
-  margin: 8px 0;
-}
-
-.signup-footer a {
-  color: #38bdf8;
-  text-decoration: none;
+  margin-bottom: 10px;
   font-weight: 600;
 }
 
-.signup-footer a:hover {
-  text-decoration: underline;
-}
-
+/* --- RESPONSIVE --- */
 @media (max-width: 600px) {
   .signup-card {
-    padding: 30px 20px;
+    padding: 28px 20px;
   }
 
-  .logo-section h1 {
-    font-size: 1.8rem;
+  button {
+    width: 100%;
   }
 }

@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
+import {  UserRole } from '../../services/auth.service';
+import { BrandAuthService ,BrandRole } from '../../services/Brand';
 
 @Component({
   selector: 'app-signup-brand',
@@ -17,24 +18,24 @@ export class SignupBrandComponent {
     email: '',
     password: '',
     confirmPassword: '',
-    companyName: '',
-    brandType: 'small',        // 'small' | 'large'
-    budgetRange: '1000-5000',
-    industry: ''
+    brandName: '',
+    industry: '',
+    mainProducts: '',
+    visualIdentity: '',
+    values: '',
+    brandType: 'Small_brand' // default value
   };
 
   error = '';
   loading = false;
 
-  constructor(
-    private router: Router,
-    private auth: AuthService
-  ) {}
+  constructor(private router: Router, private brandAuth: BrandAuthService) {}
 
   async onSignup() {
     this.error = '';
 
-    if (!this.signupData.name || !this.signupData.email || !this.signupData.password) {
+    // --- validation ---
+    if (!this.signupData.name || !this.signupData.email || !this.signupData.password || !this.signupData.brandName) {
       this.error = 'Please fill all required fields';
       return;
     }
@@ -52,19 +53,38 @@ export class SignupBrandComponent {
     this.loading = true;
 
     try {
-      const cleanEmail = this.signupData.email.trim().toLowerCase();
+      const email = this.signupData.email.trim().toLowerCase();
       const fullName = this.signupData.name.trim();
+      const valuesArray = this.signupData.values
+        ? this.signupData.values.split(',').map(v => v.trim())
+        : [];
 
-      // map brand type to role
-      const role = this.signupData.brandType === 'large' ? 'enterprise' : 'brand';
+      const role: BrandRole = this.signupData.brandType as BrandRole; // small_brand or large_brand
 
-      await this.auth.signUpWithProfile({
-        email: cleanEmail,
+      // --- brand data for brand_profiles table ---
+      const brandData = {
+        brandName: this.signupData.brandName.trim(),
+       industry: this.signupData.industry.trim() || undefined,
+mainProducts: this.signupData.mainProducts.trim() || undefined,
+visualIdentity: this.signupData.visualIdentity.trim() || undefined,
+
+        values: valuesArray
+      };
+
+      // ✅ Use the new BrandAuthService
+      await this.brandAuth.signUpBrand({
+        email,
         password: this.signupData.password,
         fullName,
-        role
+        role,
+        brandName: brandData.brandName,
+        industry: brandData.industry,
+        mainProducts: brandData.mainProducts,
+        visualIdentity: brandData.visualIdentity,
+        values: brandData.values
       });
 
+      // redirect to login page
       this.router.navigate(['/login']);
     } catch (err: any) {
       console.error('Brand signup error:', err);

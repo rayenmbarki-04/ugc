@@ -4,7 +4,7 @@
   <!-- Profile -->
   <div class="profile-section" (click)="setActiveSection('profile')">
     <img src="assets/profilepic.png" alt="Profile Picture" class="profile-pic">
-    <h3 class="profile-name">Ahmed Oc</h3>
+<h3 class="profile-name">{{ profile.full_name || currentUser?.email || 'User' }}</h3>
   </div>
 
   <!-- Menu -->
@@ -51,12 +51,19 @@
   <!-- Profile Overview -->
   <div class="profile-overview">
     <img src="assets/profilepic.png" alt="Profile Picture" class="profile-pic-large">
-    <h2>Ahmed Oc</h2>
+    <h2> {{ profile.full_name || currentUser?.email || 'User' }}</h2>
     <div class="linked-accounts">
       <p>Instagram: @ahmed</p>
       <p>TikTok: @ahmedt</p>
       <p>Followers: 12,000</p>
     </div>
+    <div *ngIf="approvedVideos.length > 0" class="approved-videos">
+  <h3>Your Approved Videos</h3>
+  <div class="video-grid">
+    <video *ngFor="let vid of approvedVideos" [src]="vid.video_url" controls muted></video>
+  </div>
+</div>
+
     <button class="btn" (click)="openPersonalization()">Personalize Info</button>
   </div>
 
@@ -77,7 +84,7 @@
 
   <!-- Logout -->
   <div class="profile-section-card">
-    <button class="btn logout-btn">Logout</button>
+    <button class="btn logout-btn" (click)="logout()">Logout</button>
   </div>
 </section>
 
@@ -85,11 +92,12 @@
 <div class="popup" *ngIf="showPersonalization">
   <form (ngSubmit)="savePersonalization()">
     <h3>Personalization</h3>
-    <label>Age / Localisation: <input type="text" [(ngModel)]="user.ageLocation" name="ageLocation"></label>
-    <label>Centres d’intérêt: <input type="text" [(ngModel)]="user.interests" name="interests"></label>
-    <label>Platforms used: <input type="text" [(ngModel)]="user.platforms" name="platforms"></label>
-    <label>Average daily usage: <input type="text" [(ngModel)]="user.dailyTime" name="dailyTime"></label>
-    <label>Preferred content type: <input type="text" [(ngModel)]="user.contentType" name="contentType"></label>
+   <label>Age: <input type="text" [(ngModel)]="profile.age" name="age"></label>
+  <label>Location: <input type="text" [(ngModel)]="profile.location" name="location"></label>
+  <label>Interests: <input type="text" [(ngModel)]="profile.interestsString" name="interests"></label>
+  <label>Platforms: <input type="text" [(ngModel)]="profile.platformsString" name="platforms"></label>
+  <label>Daily Time: <input type="text" [(ngModel)]="profile.daily_time" name="dailyTime"></label>
+  <label>Preferred Content Types: <input type="text" [(ngModel)]="profile.preferredContentString" name="contentType"></label>
     <div class="popup-actions">
       <button type="submit" class="btn">Save</button>
       <button type="button" class="btn" (click)="closePersonalization()">Cancel</button>
@@ -159,16 +167,16 @@
 
    <!-- Notifications -->
 <section *ngIf="activeSection === 'notifications'">
-  <h2>Notifications</h2>
-  <ul class="notifications-list">
-    <li *ngFor="let note of notifications" class="notification-card">
-      <i class="fa fa-bell"></i> <!-- optional bell icon -->
-      <div class="notification-content">
-        <p>{{ note.message }}</p>
-        <span class="timestamp">{{ note.time | date:'short' }}</span>
-      </div>
+  <div class="notifications-dropdown">
+  <h4>Notifications</h4>
+  <ul>
+    <li *ngFor="let notif of notifications" [ngClass]="notif.type">
+      {{ notif.message }}
+      <small>{{ notif.created_at | date:'short' }}</small>
     </li>
   </ul>
+</div>
+
 </section>
 
 
@@ -197,42 +205,122 @@
   </div>
 
   <div class="campaigns-grid">
-    <div class="campaign-card" *ngFor="let campaign of campaigns" (click)="openCampaignPopup(campaign)">
-      <img [src]="campaign.image" alt="{{ campaign.name }}" class="campaign-image" />
-      <div class="campaign-info">
-        <h3>{{ campaign.name }}</h3>
-        <p><strong>Brand:</strong> {{ campaign.brand }}</p>
-        <p><strong>Start:</strong> {{ campaign.start_date | date }}</p>
-        <p><strong>Deadline:</strong> {{ campaign.deadline | date }}</p>
-        <p><strong>Price:</strong> {{ campaign.price | currency }}</p>
-        <p class="campaign-desc">{{ campaign.short_description }}</p>
+  <div class="campaign-card" *ngFor="let campaign of campaigns" (click)="openCampaignPopup(campaign)">
+    <img [src]="campaign.image" alt="{{ campaign.name }}" class="campaign-image" />
+    <div class="campaign-info">
+      <h3>{{ campaign.name }}</h3>
+      <p><strong>Brand:</strong> {{ campaign.brand }}</p>
+      <p><strong>Start:</strong> {{ campaign.start_date | date }}</p>
+      <p><strong>Deadline:</strong> {{ campaign.end_date | date }}</p>
+      <p><strong>Status:</strong> {{ campaign.status }}</p>
+      <p><strong>Budget:</strong> {{ campaign.budget | currency }}</p>
+
+      <div *ngIf="campaign.brand_info">
+        
       </div>
+
+    
     </div>
   </div>
+</div>
 
-  <!-- Campaign Popup -->
-  <div class="campaign-popup" *ngIf="selectedCampaign">
-    <div class="popup-content">
-      <button class="close-btn" (click)="closeCampaignPopup()">X</button>
-      <h3>{{ selectedCampaign.name }}</h3>
-      <p><strong>Brand:</strong> {{ selectedCampaign.brand }}</p>
-      <p><strong>Product:</strong> {{ selectedCampaign.product }}</p>
-      <p><strong>Start:</strong> {{ selectedCampaign.start_date | date }}</p>
-      <p><strong>Deadline:</strong> {{ selectedCampaign.deadline | date }}</p>
-      <p><strong>Price:</strong> {{ selectedCampaign.price | currency }}</p>
-      <p>{{ selectedCampaign.full_description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...' }}</p>
+<!-- Campaign Popup -->
+<div class="campaign-popup" *ngIf="selectedCampaign">
+  <div class="popup-content">
+    <button class="close-btn" (click)="closeCampaignPopup()">X</button>
+
+    <!-- Campaign Title -->
+    <h3 class="campaign-title">{{ selectedCampaign.name }}</h3>
+
+    <!-- Campaign Basic Info -->
+    <div class="campaign-basic-info">
+      <p class="campaign-brand"><strong>Brand:</strong> {{ selectedCampaign.brand }}</p>
+      <p class="campaign-status"><strong>Status:</strong> {{ selectedCampaign.status }}</p>
+      <p class="campaign-start"><strong>Start:</strong> {{ selectedCampaign.start_date | date }}</p>
+      <p class="campaign-deadline"><strong>Deadline:</strong> {{ selectedCampaign.end_date | date }}</p>
+      <p class="campaign-budget"><strong>Budget:</strong> {{ selectedCampaign.budget | currency }}</p>
+    </div>
+
+    <!-- Brand Info -->
+    <div *ngIf="selectedCampaign.brand_info" class="campaign-brand-info">
+      <p class="brand-description"><strong>Brand Description:</strong> {{ selectedCampaign.brand_info.description }}</p>
+      <p class="brand-qualities"><strong>Qualities:</strong> {{ selectedCampaign.brand_info.qualities.join(', ') }}</p>
+    </div>
+
+    <!-- Campaign Details -->
+    <div *ngIf="selectedCampaign.campaign_details" class="campaign-details">
+      <h4 class="details-title">Campaign Details:</h4>
+      <p class="details-objective"><strong>Objective:</strong> {{ selectedCampaign.campaign_details.objective }}</p>
+      <p class="details-content-type"><strong>Content Type:</strong> {{ selectedCampaign.campaign_details.content_type }}</p>
+      <p class="details-platforms"><strong>Platforms:</strong> {{ selectedCampaign.campaign_details.platforms.join(', ') }}</p>
+      <p class="details-hashtag"><strong>Hashtag:</strong> {{ selectedCampaign.campaign_details.hashtag }}</p>
+      <p class="details-product"><strong>Product:</strong> {{ selectedCampaign.campaign_details.product.name }} - {{ selectedCampaign.campaign_details.product.description }}</p>
+      <p class="details-number-creators"><strong>Number of Creators:</strong> {{ selectedCampaign.campaign_details.number_of_creators }}</p>
+      <p class="details-spots"><strong>Spots Remaining:</strong> {{ selectedCampaign.campaign_details.spots_remaining }}</p>
+      <p class="details-creator-type"><strong>Creator Type:</strong> {{ selectedCampaign.campaign_details.creator_type }}</p>
+      <p class="details-your-mission"><strong>Your Mission:</strong> {{ selectedCampaign.campaign_details.your_mission }}</p>
+      <p class="details-what-to-do"><strong>What to Do:</strong> {{ selectedCampaign.campaign_details.what_to_do.join(', ') }}</p>
+      <p class="details-what-not-to-do"><strong>What Not to Do:</strong> {{ selectedCampaign.campaign_details.what_not_to_do.join(', ') }}</p>
+    </div>
+
+   
+
+    <!-- Upload Section -->
+    <div class="upload-section">
+  <label for="fileUpload" class="upload-label">Upload your content:</label>
+  <input type="file" id="fileUpload" (change)="onFileSelected($event)" class="upload-input"/>
+</div>
+<p>{{ uploadMessage }}</p>
+<!-- ✅ Add this here -->
+
+
+  <!-- ✅ Only the current user’s submission -->
+
+
+
+
+    <!-- Reserve Spot Button -->
+    <div class="buttons-section">
+
+<button
+  class="submit-btn"
+  (click)="submitFile()"
+>
+  Submit File
+</button>
+<button class="reserve-btn" (click)="reserveSpot(selectedCampaign)">
+    Reserve Your Spot
+  </button>
+
       
-      <!-- Upload Section -->
-      <div class="upload-section">
-        <label for="fileUpload">Upload your content:</label>
-        <input type="file" id="fileUpload" />
-      </div>
+    </div> 
+    <div *ngIf="submissionExists" class="submission-status-box">
+  <h4>Your Submission</h4>
 
-      <!-- Reserve Spot -->
-      <button class="reserve-btn">Reserve Your Spot</button>
-    </div>
+  <p>
+    Status: <strong [ngClass]="mySubmission.status">{{ mySubmission.status | uppercase }}</strong>
+  </p>
+
+  <p *ngIf="mySubmission.feedback">
+    <strong>Feedback:</strong> {{ mySubmission.feedback }}
+  </p>
+
+  <!-- Video preview -->
+  <div class="video-preview">
+    <video
+      *ngIf="mySubmission.videoUrl"
+      [src]="mySubmission.videoUrl"
+      controls
+      poster="assets/video-placeholder.png"
+    ></video>
   </div>
+</div>
+   </div>
+</div>
+
+
 </section>
+
 
 
    <section *ngIf="activeSection === 'badges'">

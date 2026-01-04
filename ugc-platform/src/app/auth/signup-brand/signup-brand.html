@@ -12,8 +12,8 @@
       </div>
 
       <div class="form-group">
-        <label>Company Name *</label>
-        <input type="text" [(ngModel)]="signupData.companyName" name="companyName" placeholder="Fashion Elite" required>
+        <label>Brand Name *</label>
+        <input type="text" [(ngModel)]="signupData.brandName" name="brandName" placeholder="Fashion Elite" required>
       </div>
 
       <div class="form-group">
@@ -31,13 +31,7 @@
         <input type="password" [(ngModel)]="signupData.confirmPassword" name="confirmPassword" placeholder="••••••••" required>
       </div>
 
-      <div class="form-group">
-        <label>Brand Size *</label>
-        <select [(ngModel)]="signupData.brandType" name="brandType">
-          <option value="small-brand">Small Brand / Local Business</option>
-          <option value="large-brand">Large Brand / Enterprise</option>
-        </select>
-      </div>
+      
 
       <div class="form-group">
         <label>Industry (Optional)</label>
@@ -57,15 +51,18 @@
       </div>
 
       <div class="form-group">
-        <label>Monthly Budget (DT) (Optional)</label>
-        <select [(ngModel)]="signupData.budgetRange" name="budgetRange">
-          <option value="1000-5000">1,000 - 5,000 DT</option>
-          <option value="5000-10000">5,000 - 10,000 DT</option>
-          <option value="10000-25000">10,000 - 25,000 DT</option>
-          <option value="25000-50000">25,000 - 50,000 DT</option>
-          <option value="50000-100000">50,000 - 100,000 DT</option>
-          <option value="100000+">100,000+ DT</option>
-        </select>
+        <label>Main Products (Optional)</label>
+        <input type="text" [(ngModel)]="signupData.mainProducts" name="mainProducts" placeholder="Shoes, Bags, Accessories">
+      </div>
+
+      <div class="form-group">
+        <label>Visual Identity (Optional)</label>
+        <input type="text" [(ngModel)]="signupData.visualIdentity" name="visualIdentity" placeholder="Logo, Colors, Typography">
+      </div>
+
+      <div class="form-group">
+        <label>Values (Optional)</label>
+        <input type="text" [(ngModel)]="signupData.values" name="values" placeholder="Sustainability, Quality, Innovation">
       </div>
 
       <div *ngIf="error" class="error-message">{{ error }}</div>

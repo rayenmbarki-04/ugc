@@ -33,35 +33,41 @@ export class LoginComponent {
       const email = this.credentials.email.trim().toLowerCase();
       const password = this.credentials.password;
 
-      await this.auth.signIn(email, password);
+      // 1️⃣ Attempt login
+      const user = await this.auth.signIn(email, password);
+      if (!user) {
+        this.error = 'Invalid email or password';
+        return;
+      }
 
+      // 2️⃣ Save user session
+      this.auth.login(user.id); // <-- stores userId in localStorage
+
+      // 3️⃣ Fetch profile
       const profile = await this.auth.getProfile();
       if (!profile) {
         this.error = 'Profile not found';
         return;
       }
 
-      // high-level role decides "creator vs brand"
-      if (profile.role === 'creator') {
-        const type = profile.creator_type || 'user';
+      // 4️⃣ Route based on role
+      const creatorRoles = ['user', 'micro_influencer', 'influencer'];
+      const brandRoles = ['Small_brand', 'Large_brand'];
 
-        if (type === 'micro') {
-          this.router.navigate(['/dashboard/micro'], { state: { profile } });
-        } else if (type === 'influencer') {
-          this.router.navigate(['/dashboard/influencer'], { state: { profile } });
-        } else {
-          this.router.navigate(['/dashboard/user'], { state: { profile } });
-        }
-      } else if (profile.role === 'brand') {
-        this.router.navigate(['/dashboard/brand/small'], { state: { profile } });
-      } else if (profile.role === 'enterprise') {
-        this.router.navigate(['/dashboard/brand/large'], { state: { profile } });
-      } else {
-        this.router.navigate(['/dashboard/user'], { state: { profile } });
-      }
+      if (creatorRoles.includes(profile.role)) {
+  this.auth.login(profile.id);  // save session
+  this.router.navigate(['/dashboard/micro-influencer']);
+} else if (brandRoles.includes(profile.role)) {
+  this.auth.login(profile.id);
+  this.router.navigate(['/dashboard/brand/large']); // choose small or large based on your logic
+} else {
+  this.auth.login(profile.id);
+  this.router.navigate(['/dashboard/creator']);
+}
+
     } catch (err: any) {
       console.error('Login error:', err);
-      this.error = err.message || JSON.stringify(err);
+      this.error = err?.message || 'An unexpected error occurred';
     } finally {
       this.loading = false;
     }
